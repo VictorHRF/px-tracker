@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/layout/logout-button";
+import Link from "next/link";
 
 export default async function DashboardLayout({
   children,
@@ -28,7 +29,19 @@ export default async function DashboardLayout({
             </p>
           </div>
 
-          <LogoutButton />
+          <div className="flex items-center gap-4">
+            <nav className="flex items-center gap-3 text-sm">
+              <Link href="/pacientes" className="hover:underline">
+                Pacientes
+              </Link>
+
+              <Link href="/historial" className="hover:underline">
+                Historial
+              </Link>
+            </nav>
+
+            <LogoutButton />
+          </div>
         </div>
       </header>
 

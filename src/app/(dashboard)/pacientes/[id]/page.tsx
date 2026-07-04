@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { completePatientTaskAction } from "./pendientes/actions";
+import { ReactivatePatientForm } from "@/components/patients/reactivate-patient-form";
 
 type PatientDetailPageProps = {
   params: Promise<{
@@ -136,26 +137,42 @@ export default async function PatientDetailPage({
               {getPatientTypeLabel(patient.patient_type)}
             </p>
           </div>
+          {patient.tracking_status === "active" ? (
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/pacientes/${patient.id}/evoluciones/nueva`}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+              >
+                Nueva evolución
+              </Link>
 
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={`/pacientes/${patient.id}/evoluciones/nueva`}
-              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-            >
-              Nueva evolución
-            </Link>
+              <Link
+                href={`/pacientes/${patient.id}/pendientes/nuevo`}
+                className="rounded-md border px-4 py-2 text-sm"
+              >
+                Nuevo pendiente
+              </Link>
 
-            <Link
-              href={`/pacientes/${patient.id}/pendientes/nuevo`}
-              className="rounded-md border px-4 py-2 text-sm"
-            >
-              Nuevo pendiente
-            </Link>
-          </div>
+              <Link
+                href={`/pacientes/${patient.id}/seguimiento/cerrar`}
+                className="rounded-md border px-4 py-2 text-sm"
+              >
+                Cerrar seguimiento
+              </Link>
+            </div>
+          ) : (
+            <div className="rounded-xl border p-4">
+              <h3 className="font-semibold">Paciente en historial</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Este paciente no está actualmente en seguimiento activo.
+              </p>
+              <ReactivatePatientForm patientId={patient.id} />
+            </div>
+          )}
         </div>
       </div>
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-4">
         <div className="rounded-xl border p-4">
           <p className="text-sm text-muted-foreground">Estado clínico</p>
           <p className="font-semibold">
@@ -173,6 +190,15 @@ export default async function PatientDetailPage({
         <div className="rounded-xl border p-4">
           <p className="text-sm text-muted-foreground">Fecha de ingreso</p>
           <p className="font-semibold">{patient.admission_date}</p>
+        </div>
+
+        <div className="rounded-xl border p-4">
+          <p className="text-sm text-muted-foreground">Estado de seguimiento</p>
+          <p className="font-semibold">
+            {patient.tracking_status === "active"
+              ? "Activo"
+              : "En historial"}
+          </p>
         </div>
       </section>
 
